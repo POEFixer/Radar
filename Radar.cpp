@@ -32,7 +32,7 @@ public:
         if (ctx()->ImGuiContext) {
             ImGui::SetCurrentContext(static_cast<ImGuiContext*>(ctx()->ImGuiContext));
         }
-        m_s.Load(Directory());
+        m_s.Load(DirectoryPath());
 
         // Initial grid load. We do NOT rely on OnAreaChange: the event fires
         // synchronously when the worker thread detects AreaChangeCounter++,
@@ -97,7 +97,7 @@ public:
     }
 
     void SaveSettings() override {
-        m_s.Save(Directory());
+        m_s.Save(DirectoryPath());
     }
 
 private:

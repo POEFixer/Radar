@@ -38,13 +38,17 @@ struct RadarSettings {
     // overlay color so the demo plugin reads at a glance.
     ImVec4 WalkableColor    {1.0f, 1.0f, 1.0f, 200.0f / 255.0f};
 
-    void Save(const std::string& directory) const;
-    void Load(const std::string& directory);
+    // fs::path overloads — Unicode-safe. Plugins should pass DirectoryPath()
+    // (UTF-8 → wide conversion baked in) rather than Directory(), because
+    // fs::path(std::string) on Windows interprets the bytes via the system
+    // ANSI codepage and produces mojibake when the host's exe lives in a
+    // folder with non-ASCII chars (Cyrillic, CJK).
+    void Save(const std::filesystem::path& directory) const;
+    void Load(const std::filesystem::path& directory);
 };
 
-inline void RadarSettings::Save(const std::string& directory) const {
-    std::filesystem::path p =
-        std::filesystem::path(directory) / "config" / "settings.json";
+inline void RadarSettings::Save(const std::filesystem::path& directory) const {
+    std::filesystem::path p = directory / "config" / "settings.json";
     std::error_code ec;
     std::filesystem::create_directories(p.parent_path(), ec);
     std::ofstream out(p);
@@ -58,9 +62,8 @@ inline void RadarSettings::Save(const std::string& directory) const {
     out << "}\n";
 }
 
-inline void RadarSettings::Load(const std::string& directory) {
-    std::filesystem::path p =
-        std::filesystem::path(directory) / "config" / "settings.json";
+inline void RadarSettings::Load(const std::filesystem::path& directory) {
+    std::filesystem::path p = directory / "config" / "settings.json";
     if (!std::filesystem::exists(p)) return;
     std::ifstream in(p);
     if (!in.is_open()) return;
