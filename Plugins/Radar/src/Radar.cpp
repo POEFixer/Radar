@@ -14,7 +14,7 @@
 // PluginSDK.h emit the PluginSDK_AttachHost export and define PLUGIN_API as
 // __declspec(dllexport).
 
-#include "sdk/PluginSDK.h"
+#include "../../../POEFixer/plugin_sdk/PluginSDK.h"
 
 #include "RadarSettings.h"
 

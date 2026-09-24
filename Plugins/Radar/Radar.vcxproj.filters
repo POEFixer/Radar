@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\Radar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\POEFixer\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\POEFixer\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\POEFixer\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\POEFixer\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\RadarSettings.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\POEFixer\plugin_sdk\PluginAbi.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\POEFixer\plugin_sdk\PluginSDK.h">
+      <Filter>api</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{0f0c445d-b7bd-439a-b43b-67afb87cf0d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{e57871b5-b4c6-4bf9-8f55-e9a87329cfd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api">
+      <UniqueIdentifier>{cd7716b3-6e1f-4a14-a994-419601dc94b3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

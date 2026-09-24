@@ -12,43 +12,17 @@ walkable-tile overlay. Per-rarity monster colors, NPCs, chests
 (closed vs opened), and area transitions are configurable from the
 Plugins settings tab inside POE2Fixer.
 
-## Building
+## Build from source
 
-Open `Radar.sln` in Visual Studio 2022. Build Release|x64. Output:
+This repository is the plugin folder from the POEFixer source tree (`Plugins/Radar/`) together with the host files it compiles against, kept at the same relative paths:
 
-    bin/Release/Radar.dll
+- `POEFixer/plugin_sdk/` - the POEFixer Plugin SDK v6 headers (`PluginAbi.h`, `PluginSDK.h`)
+- `POEFixer/imgui/` - the Dear ImGui sources the DLL compiles against
 
-Or from command line:
-```
-"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" Radar.sln -p:Configuration=Release -p:Platform=x64
-```
+1. Install Visual Studio 2022 with the "Desktop development with C++" workload (MSVC v143, Windows 10/11 SDK).
+2. Open `Radar.sln`, select **Release | x64** and build the solution.
+3. The plugin is written to `x64\Release\Plugins\Radar\Radar.dll`.
 
-## Installing
+## Install
 
-Copy the folder (or just the built DLL) into POE2Fixer's plugin
-directory:
-
-    POE2Fixer/Plugins/Radar/Radar.dll
-
-Restart POE2Fixer. Enable Radar in the Plugins tab.
-
-## Source
-
-The same source is shipped inside the main POE2Fixer repo at
-`Plugins/Radar/`. This standalone repo is for plugin authors who
-want to fork it as a template.
-
-## SDK Version
-
-This plugin targets v6 of the Plugin SDK. The bundled `sdk/` headers
-must match the host POE2Fixer's expected SDK version (run-time check
-will refuse mismatched plugins with a clear log entry).
-
-## Project Structure
-
-```
-sdk/            Plugin SDK headers (PluginAbi.h, PluginSDK.h)
-imgui/          ImGui library (headers + sources, compiled into the DLL)
-Radar.cpp       Main plugin entry point
-RadarSettings.h Settings POCO with JSON persistence
-```
+Copy `Radar.dll` into `Plugins\Radar\` next to the POEFixer executable (create the folder if needed), start POEFixer and enable the plugin in the Plugins tab.
