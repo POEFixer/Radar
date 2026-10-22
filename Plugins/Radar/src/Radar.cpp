@@ -205,3 +205,11 @@ extern "C" PLUGIN_API PluginSDK::Plugin* CreatePlugin() {
 extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) {
     delete p;
 }
+
+// Plugin info: the host checks it before CreatePlugin; the publish tool reads it.
+POEFIXER_PLUGIN_INFO(
+    "Radar",
+    "Radar",
+    "1.0.0",
+    "POEFixer",
+    "Draws nearby monsters, NPCs, chests, area transitions and the walkable map on the in-game large map.")
