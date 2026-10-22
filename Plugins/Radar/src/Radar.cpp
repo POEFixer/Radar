@@ -210,6 +210,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) {
 POEFIXER_PLUGIN_INFO(
     "Radar",
     "Radar",
-    "1.0.0",
+    "1.0.1",
     "POEFixer",
     "Draws nearby monsters, NPCs, chests, area transitions and the walkable map on the in-game large map.")
