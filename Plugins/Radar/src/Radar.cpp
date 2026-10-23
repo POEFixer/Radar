@@ -52,6 +52,10 @@ public:
     }
 
     void DrawSettings() override {
+        // A separate menu window draws the settings in its own ImGui context.
+        if (ctx()->ImGuiContext) {
+            ImGui::SetCurrentContext(static_cast<ImGuiContext*>(ctx()->ImGuiContext));
+        }
         ImGui::Checkbox("Draw walkable map", &m_s.DrawWalkable);
         ImGui::Checkbox("Monsters",          &m_s.DrawMonsters);
         ImGui::Checkbox("NPCs",              &m_s.DrawNpcs);
@@ -210,6 +214,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) {
 POEFIXER_PLUGIN_INFO(
     "Radar",
     "Radar",
-    "1.0.1",
+    "1.0.2",
     "POEFixer",
     "Draws nearby monsters, NPCs, chests, area transitions and the walkable map on the in-game large map.")
