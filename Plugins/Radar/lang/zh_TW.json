@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "繪製可行走地圖",
+  "settings_draw_monsters": "怪物",
+  "settings_draw_npcs": "NPC",
+  "settings_draw_chests": "寶箱",
+  "settings_draw_transitions": "區域傳送門",
+  "color_normal_monster": "普通怪物",
+  "color_magic_monster": "魔法怪物",
+  "color_rare_monster": "稀有怪物",
+  "color_unique_monster": "傳奇怪物",
+  "color_npc": "NPC",
+  "color_chest": "寶箱",
+  "color_chest_opened": "寶箱（已開啟）",
+  "color_transition": "區域傳送門",
+  "color_player": "玩家",
+  "color_walkable_tile": "可行走圖塊"
+}

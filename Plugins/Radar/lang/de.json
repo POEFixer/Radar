@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Begehbare Karte zeichnen",
+  "settings_draw_monsters": "Monster",
+  "settings_draw_npcs": "NPCs",
+  "settings_draw_chests": "Truhen",
+  "settings_draw_transitions": "Gebietsübergänge",
+  "color_normal_monster": "Normales Monster",
+  "color_magic_monster": "Magisches Monster",
+  "color_rare_monster": "Seltenes Monster",
+  "color_unique_monster": "Einzigartiges Monster",
+  "color_npc": "NPC",
+  "color_chest": "Truhe",
+  "color_chest_opened": "Truhe (geöffnet)",
+  "color_transition": "Übergang",
+  "color_player": "Spieler",
+  "color_walkable_tile": "Begehbares Feld"
+}

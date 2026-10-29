@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Desenhar mapa caminhável",
+  "settings_draw_monsters": "Monstros",
+  "settings_draw_npcs": "NPCs",
+  "settings_draw_chests": "Baús",
+  "settings_draw_transitions": "Transições de área",
+  "color_normal_monster": "Monstro normal",
+  "color_magic_monster": "Monstro mágico",
+  "color_rare_monster": "Monstro raro",
+  "color_unique_monster": "Monstro único",
+  "color_npc": "NPC",
+  "color_chest": "Baú",
+  "color_chest_opened": "Baú (aberto)",
+  "color_transition": "Transição",
+  "color_player": "Jogador",
+  "color_walkable_tile": "Bloco caminhável"
+}

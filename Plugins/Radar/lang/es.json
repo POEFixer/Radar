@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Dibujar mapa transitable",
+  "settings_draw_monsters": "Monstruos",
+  "settings_draw_npcs": "PNJ",
+  "settings_draw_chests": "Cofres",
+  "settings_draw_transitions": "Transiciones de área",
+  "color_normal_monster": "Monstruo normal",
+  "color_magic_monster": "Monstruo mágico",
+  "color_rare_monster": "Monstruo raro",
+  "color_unique_monster": "Monstruo único",
+  "color_npc": "PNJ",
+  "color_chest": "Cofre",
+  "color_chest_opened": "Cofre (abierto)",
+  "color_transition": "Transición",
+  "color_player": "Jugador",
+  "color_walkable_tile": "Casilla transitable"
+}

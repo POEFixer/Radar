@@ -1,6 +1,6 @@
 # Radar — POE2Fixer Plugin SDK Example
 
-Current version: 1.0.2
+Current version: 1.0.3
 
 Requires POE2Fixer 364 or newer.
 
@@ -26,8 +26,9 @@ This repository is the plugin folder from the POE2Fixer source tree (`Plugins/Ra
 
 - `POEFixer/plugin_sdk/` - the POE2Fixer Plugin SDK v6 headers (`PluginAbi.h`, `PluginSDK.h`)
 - `POEFixer/imgui/` - the Dear ImGui sources the DLL compiles against
+- `tools/plugin_i18n/gen.py` - the translation tool: after editing `Plugins/Radar/lang/en.json` run `python tools/plugin_i18n/gen.py Plugins/Radar` (it rewrites the embedded English header); `--gate` checks every language file and the keys the sources use
 
 1. Install Visual Studio 2022 with the "Desktop development with C++" workload (MSVC v143, Windows 10/11 SDK).
 2. Open `Radar.sln`, select **Release | x64** and build the solution.
 3. The plugin is written to `x64\Release\Plugins\Radar\Radar.dll` (Release builds carry no debug information, see `Directory.Build.targets`).
-4. Copy `Radar.dll` into `Plugins\Radar\` next to the POE2Fixer executable.
+4. Copy `Radar.dll` into `Plugins\Radar\` next to the POE2Fixer executable, together with `Plugins\Radar\lang` from this repository (same folder names).

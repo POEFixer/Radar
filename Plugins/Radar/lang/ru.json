@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Рисовать карту проходимости",
+  "settings_draw_monsters": "Монстры",
+  "settings_draw_npcs": "NPC",
+  "settings_draw_chests": "Сундуки",
+  "settings_draw_transitions": "Переходы между областями",
+  "color_normal_monster": "Обычный монстр",
+  "color_magic_monster": "Волшебный монстр",
+  "color_rare_monster": "Редкий монстр",
+  "color_unique_monster": "Уникальный монстр",
+  "color_npc": "NPC",
+  "color_chest": "Сундук",
+  "color_chest_opened": "Сундук (открыт)",
+  "color_transition": "Переход",
+  "color_player": "Игрок",
+  "color_walkable_tile": "Проходимая клетка"
+}

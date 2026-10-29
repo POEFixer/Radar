@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Dessiner la carte praticable",
+  "settings_draw_monsters": "Monstres",
+  "settings_draw_npcs": "PNJ",
+  "settings_draw_chests": "Coffres",
+  "settings_draw_transitions": "Transitions de zone",
+  "color_normal_monster": "Monstre normal",
+  "color_magic_monster": "Monstre magique",
+  "color_rare_monster": "Monstre rare",
+  "color_unique_monster": "Monstre unique",
+  "color_npc": "PNJ",
+  "color_chest": "Coffre",
+  "color_chest_opened": "Coffre (ouvert)",
+  "color_transition": "Transition",
+  "color_player": "Joueur",
+  "color_walkable_tile": "Case praticable"
+}

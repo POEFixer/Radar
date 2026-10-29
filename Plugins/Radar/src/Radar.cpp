@@ -13,8 +13,13 @@
 // PLUGIN_EXPORTS is set in the vcxproj preprocessor definitions, which makes
 // PluginSDK.h emit the PluginSDK_AttachHost export and define PLUGIN_API as
 // __declspec(dllexport).
+//
+// Texts follow the program language (PluginI18n.h): lang/<code>.json next to the
+// DLL, English compiled in through lang_en.generated.h (python
+// tools/plugin_i18n/gen.py Plugins/Radar after editing lang/en.json).
 
 #include "../../../POEFixer/plugin_sdk/PluginSDK.h"
+#include "lang_en.generated.h"   // once per DLL, after PluginSDK.h
 
 #include "RadarSettings.h"
 
@@ -22,6 +27,8 @@
 
 #include <algorithm>
 #include <cstdint>
+
+namespace I18n = PluginSDK::I18n;
 
 class RadarPlugin : public PluginSDK::Plugin {
 public:
@@ -56,22 +63,45 @@ public:
         if (ctx()->ImGuiContext) {
             ImGui::SetCurrentContext(static_cast<ImGuiContext*>(ctx()->ImGuiContext));
         }
-        ImGui::Checkbox("Draw walkable map", &m_s.DrawWalkable);
-        ImGui::Checkbox("Monsters",          &m_s.DrawMonsters);
-        ImGui::Checkbox("NPCs",              &m_s.DrawNpcs);
-        ImGui::Checkbox("Chests",            &m_s.DrawChests);
-        ImGui::Checkbox("Area transitions",  &m_s.DrawTransitions);
+        // TrId: "<text>###<key>", so each widget keeps its ImGui id in every language.
+        ImGui::Checkbox(I18n::TrId("settings_draw_walkable"),   &m_s.DrawWalkable);
+        ImGui::Checkbox(I18n::TrId("settings_draw_monsters"),   &m_s.DrawMonsters);
+        ImGui::Checkbox(I18n::TrId("settings_draw_npcs"),       &m_s.DrawNpcs);
+        ImGui::Checkbox(I18n::TrId("settings_draw_chests"),     &m_s.DrawChests);
+        ImGui::Checkbox(I18n::TrId("settings_draw_transitions"), &m_s.DrawTransitions);
         ImGui::Separator();
-        ImGui::ColorEdit4("Normal monster",  &m_s.RarityColor[0].x);
-        ImGui::ColorEdit4("Magic monster",   &m_s.RarityColor[1].x);
-        ImGui::ColorEdit4("Rare monster",    &m_s.RarityColor[2].x);
-        ImGui::ColorEdit4("Unique monster",  &m_s.RarityColor[3].x);
-        ImGui::ColorEdit4("NPC",             &m_s.NpcColor.x);
-        ImGui::ColorEdit4("Chest",           &m_s.ChestColor.x);
-        ImGui::ColorEdit4("Chest (opened)",  &m_s.ChestOpenedColor.x);
-        ImGui::ColorEdit4("Transition",      &m_s.TransitionColor.x);
-        ImGui::ColorEdit4("Player",          &m_s.PlayerColor.x);
-        ImGui::ColorEdit4("Walkable tile",   &m_s.WalkableColor.x);
+        // Labels are built every frame (they follow the language), and the inputs give up width
+        // so the longest translated label still fits beside them in a narrow tab.
+        const char* const colorLabels[] = {
+            I18n::TrId("color_normal_monster"),
+            I18n::TrId("color_magic_monster"),
+            I18n::TrId("color_rare_monster"),
+            I18n::TrId("color_unique_monster"),
+            I18n::TrId("color_npc"),
+            I18n::TrId("color_chest"),
+            I18n::TrId("color_chest_opened"),
+            I18n::TrId("color_transition"),
+            I18n::TrId("color_player"),
+            I18n::TrId("color_walkable_tile"),
+        };
+        ImVec4* const colors[] = {
+            &m_s.RarityColor[0], &m_s.RarityColor[1], &m_s.RarityColor[2], &m_s.RarityColor[3],
+            &m_s.NpcColor, &m_s.ChestColor, &m_s.ChestOpenedColor, &m_s.TransitionColor,
+            &m_s.PlayerColor, &m_s.WalkableColor,
+        };
+        static_assert(sizeof(colorLabels) / sizeof(colorLabels[0]) == sizeof(colors) / sizeof(colors[0]),
+                      "one label per color");
+        float labelWidth = 0.0f;
+        for (const char* label : colorLabels) {
+            labelWidth = (std::max)(labelWidth, ImGui::CalcTextSize(label, nullptr, true).x);
+        }
+        const float fitWidth = ImGui::GetContentRegionAvail().x - labelWidth - ImGui::GetStyle().ItemInnerSpacing.x;
+        const float inputsWidth = (std::max)(ImGui::GetFrameHeight() * 6.0f, (std::min)(ImGui::CalcItemWidth(), fitWidth));
+        ImGui::PushItemWidth(inputsWidth);
+        for (size_t i = 0; i < sizeof(colors) / sizeof(colors[0]); ++i) {
+            ImGui::ColorEdit4(colorLabels[i], &colors[i]->x);
+        }
+        ImGui::PopItemWidth();
     }
 
     void DrawUI() override {
@@ -214,6 +244,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) {
 POEFIXER_PLUGIN_INFO(
     "Radar",
     "Radar",
-    "1.0.2",
+    "1.0.3",
     "POEFixer",
     "Draws nearby monsters, NPCs, chests, area transitions and the walkable map on the in-game large map.")

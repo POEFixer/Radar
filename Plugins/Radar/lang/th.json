@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "วาดแผนที่พื้นที่เดินได้",
+  "settings_draw_monsters": "มอนสเตอร์",
+  "settings_draw_npcs": "NPC",
+  "settings_draw_chests": "หีบสมบัติ",
+  "settings_draw_transitions": "จุดเปลี่ยนด่าน",
+  "color_normal_monster": "มอนสเตอร์ปกติ",
+  "color_magic_monster": "มอนสเตอร์เมจิก",
+  "color_rare_monster": "มอนสเตอร์แรร์",
+  "color_unique_monster": "มอนสเตอร์ยูนิค",
+  "color_npc": "NPC",
+  "color_chest": "หีบสมบัติ",
+  "color_chest_opened": "หีบสมบัติ (เปิดแล้ว)",
+  "color_transition": "จุดเปลี่ยนด่าน",
+  "color_player": "ผู้เล่น",
+  "color_walkable_tile": "ไทล์ที่เดินได้"
+}

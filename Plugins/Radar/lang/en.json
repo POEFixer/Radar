@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "Draw walkable map",
+  "settings_draw_monsters": "Monsters",
+  "settings_draw_npcs": "NPCs",
+  "settings_draw_chests": "Chests",
+  "settings_draw_transitions": "Area transitions",
+  "color_normal_monster": "Normal monster",
+  "color_magic_monster": "Magic monster",
+  "color_rare_monster": "Rare monster",
+  "color_unique_monster": "Unique monster",
+  "color_npc": "NPC",
+  "color_chest": "Chest",
+  "color_chest_opened": "Chest (opened)",
+  "color_transition": "Transition",
+  "color_player": "Player",
+  "color_walkable_tile": "Walkable tile"
+}

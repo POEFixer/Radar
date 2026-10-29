@@ -21,6 +21,9 @@
     <ClInclude Include="src\RadarSettings.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\lang_en.generated.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\POEFixer\plugin_sdk\PluginAbi.h">
       <Filter>api</Filter>
     </ClInclude>

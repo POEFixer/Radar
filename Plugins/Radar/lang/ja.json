@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "歩行可能マップを描画",
+  "settings_draw_monsters": "モンスター",
+  "settings_draw_npcs": "NPC",
+  "settings_draw_chests": "宝箱",
+  "settings_draw_transitions": "エリア変更",
+  "color_normal_monster": "ノーマルモンスター",
+  "color_magic_monster": "マジックモンスター",
+  "color_rare_monster": "レアモンスター",
+  "color_unique_monster": "ユニークモンスター",
+  "color_npc": "NPC",
+  "color_chest": "宝箱",
+  "color_chest_opened": "宝箱（開封済み）",
+  "color_transition": "エリア変更",
+  "color_player": "プレイヤー",
+  "color_walkable_tile": "歩行可能タイル"
+}

@@ -1,0 +1,17 @@
+{
+  "settings_draw_walkable": "이동 가능 지도 그리기",
+  "settings_draw_monsters": "몬스터",
+  "settings_draw_npcs": "NPC",
+  "settings_draw_chests": "상자",
+  "settings_draw_transitions": "지역 이동 지점",
+  "color_normal_monster": "일반 몬스터",
+  "color_magic_monster": "마법 몬스터",
+  "color_rare_monster": "희귀 몬스터",
+  "color_unique_monster": "고유 몬스터",
+  "color_npc": "NPC",
+  "color_chest": "상자",
+  "color_chest_opened": "상자 (열림)",
+  "color_transition": "이동 지점",
+  "color_player": "플레이어",
+  "color_walkable_tile": "이동 가능한 타일"
+}
