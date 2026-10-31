@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5
+
+- Much faster with the large map open: the program no longer switches the plugin off as too slow on large areas.
+- Walkable dots are drawn only where they are on screen and are thinned out when the map is zoomed far out.
+- Map points now sit on the game's map at any terrain height.
+
 ## 1.0.4
 
 - Built with the current plugin SDK: a controller that is not XInput reports no port (-1) even when ready.
