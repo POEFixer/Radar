@@ -53,8 +53,9 @@ public:
 
     void OnDisable() override {
         m_walkable.Reset();
-        m_points.clear();
-        m_points.shrink_to_fit();
+        for (auto& level : m_levels) std::vector<WalkPoint>().swap(level);
+        std::vector<ImVec2>().swap(m_dots);
+        std::vector<PluginSDK::Entity>().swap(m_entities);
         m_heightFactor = 0.f;
         ctx()->Log.Info("Radar v6 disabled");
     }
@@ -110,15 +111,15 @@ public:
         if (ctx()->ImGuiContext) {
             ImGui::SetCurrentContext(static_cast<ImGuiContext*>(ctx()->ImGuiContext));
         }
-        // One transform per frame, checked before the snapshot: GetSnapshot copies
-        // every entity, which is wasted work on the frames the large map is closed.
+        // One transform per frame, checked before the entities are fetched: that is
+        // wasted work on the frames the large map is closed.
         const PluginSDK::MapTransform t = ctx()->Render.GetLargeMapTransform();
         if (!t.IsVisible) return;
 
-        PluginSDK::Snapshot snap = ctx()->Game.GetSnapshot();
+        const PluginSDK::Entity player = CollectEntities();
         // The host projection takes heights RELATIVE to the player (the built-in
         // radar passes entityZ - playerZ); absolute heights shift every point.
-        const float playerZ = snap.Player.IsValid ? snap.Player.TerrainHeight : 0.f;
+        const float playerZ = player.IsValid ? player.TerrainHeight : 0.f;
 
         ImDrawList* dl = ImGui::GetBackgroundDrawList();
         if (!dl) return;
@@ -129,10 +130,10 @@ public:
         } else if (m_walkable.Valid()) {
             // Do not keep an old area's grid pinned while the layer is off.
             m_walkable.Reset();
-            m_points.clear();
+            for (auto& level : m_levels) level.clear();
         }
-        DrawEntities(dl, snap, playerZ);
-        DrawPlayer(dl, snap.Player, playerZ);
+        DrawEntities(dl, playerZ);
+        DrawPlayer(dl, player, playerZ);
     }
 
     void SaveSettings() override {
@@ -142,16 +143,60 @@ public:
 private:
     // Every kStep-th cell on each axis is a walkable dot.
     static constexpr int   kStep = 4;
-    // Dots closer than this on screen (far zoom-out) are thinned out.
-    static constexpr float kMinDotSpacingPx = 3.f;
+    // Neighbouring walkable dots are at least this far apart on screen: the
+    // lattice is thinned (by powers of two) until they are.
+    static constexpr float kMinDotSpacingPx = 12.f;
+    // At most this many walkable dots per frame. A zoomed-out large map has
+    // hundreds of thousands of on-screen samples; drawing them all costs the whole
+    // program its frame rate even when DrawUI itself is fast (the vertices are
+    // rebuilt and uploaded every frame).
+    static constexpr size_t kMaxDots = 20000;
+    // Lattice levels: a point is in level L when ix and iy are both multiples of
+    // 2^L but not both of 2^(L+1) (the last level keeps the rest), so levels >= L
+    // form an even lattice with step kStep * 2^L.
+    static constexpr int kLevels = 6;
 
     struct WalkPoint {
         uint16_t ix, iy;   // grid cell = (ix * kStep, iy * kStep)
         float    z;        // terrain height of that cell
     };
 
-    void DrawEntities(ImDrawList* dl, const PluginSDK::Snapshot& snap, float playerZ) {
-        for (const auto& e : snap.Entities) {
+    static int LevelOf(unsigned ix, unsigned iy) {
+        const unsigned v = ix | iy;
+        int level = 0;
+        while (level < kLevels - 1 && (v & (1u << level)) == 0) ++level;
+        return level;
+    }
+
+    // Fetches the player and the entity types the radar draws into m_entities.
+    // GetSnapshot() without a filter copies EVERY entity with its strings (about
+    // 10 us each): a map holds 6000+ entities, mostly ones the radar never draws,
+    // and that alone took 55-85 ms per frame (measured). The type filter skips the
+    // other entities before their strings are read.
+    PluginSDK::Entity CollectEntities() {
+        const PluginSDK::EntityType types[] = {
+            PluginSDK::EntityType::Monster, PluginSDK::EntityType::NPC,
+            PluginSDK::EntityType::Chest,   PluginSDK::EntityType::AreaTransition,
+        };
+        const bool wanted[] = { m_s.DrawMonsters, m_s.DrawNpcs, m_s.DrawChests, m_s.DrawTransitions };
+        m_entities.clear();
+        PluginSDK::Entity player;
+        bool havePlayer = false;
+        for (size_t i = 0; i < sizeof(types) / sizeof(types[0]); ++i) {
+            if (!wanted[i]) continue;
+            PluginSDK::Snapshot part = ctx()->Game.GetSnapshot(types[i]);
+            if (!havePlayer) {
+                player = std::move(part.Player);
+                havePlayer = true;
+            }
+            for (auto& e : part.Entities) m_entities.push_back(std::move(e));
+        }
+        if (!havePlayer) player = ctx()->Entities.GetPlayer();
+        return player;
+    }
+
+    void DrawEntities(ImDrawList* dl, float playerZ) {
+        for (const auto& e : m_entities) {
             if (!e.IsValid) continue;
             switch (e.EntityType) {
                 case PluginSDK::EntityType::Monster:
@@ -211,7 +256,7 @@ private:
     }
 
     void BuildWalkPoints(const PluginSDK::HeightGridHandle& heights) {
-        m_points.clear();
+        for (auto& level : m_levels) level.clear();
         if (!m_walkable.Valid()) return;
         const uint8_t* grid = m_walkable.Data();
         const int w = m_walkable.Width();
@@ -243,8 +288,10 @@ private:
                 float z = 0.f;
                 if (hd && gx < hw && gy < hh)
                     z = hd[static_cast<size_t>(gy) * static_cast<size_t>(hw) + static_cast<size_t>(gx)];
-                m_points.push_back({ static_cast<uint16_t>(gx / kStep),
-                                     static_cast<uint16_t>(gy / kStep), z });
+                const unsigned ix = static_cast<unsigned>(gx / kStep);
+                const unsigned iy = static_cast<unsigned>(gy / kStep);
+                m_levels[LevelOf(ix, iy)].push_back(
+                    { static_cast<uint16_t>(ix), static_cast<uint16_t>(iy), z });
             }
         }
     }
@@ -273,39 +320,50 @@ private:
     // Projects the cached points locally with the frame's transform (the same
     // math as Render.GridToLargeMap) and draws only the on-screen ones.
     void DrawWalkable(ImDrawList* dl, const PluginSDK::MapTransform& t, float playerZ) {
-        if (m_points.empty()) return;
         if (!std::isfinite(t.ScaleX) || !std::isfinite(t.ScaleY) ||
             t.ScaleX == 0.f || t.ScaleY == 0.f) return;
         const float k = HeightFactor(t);
-
-        // Thin the lattice when neighbouring dots are closer than kMinDotSpacingPx.
         const float spacing = kStep * std::hypot(t.ScaleX, t.ScaleY);
-        unsigned lod = 0;
-        while (lod < 8 && spacing * static_cast<float>(1u << lod) < kMinDotSpacingPx) ++lod;
-        const unsigned mask = (1u << lod) - 1u;
-
         const ImVec2 clipMin = dl->GetClipRectMin();
         const ImVec2 clipMax = dl->GetClipRectMax();
+
+        // Coarse to fine: a finer level is added only while the dots stay at least
+        // kMinDotSpacingPx apart and the frame stays within kMaxDots.
+        m_dots.clear();
+        for (int level = kLevels - 1; level >= 0; --level) {
+            if (spacing * static_cast<float>(1u << level) < kMinDotSpacingPx) break;
+            const size_t before = m_dots.size();
+            for (const WalkPoint& p : m_levels[level]) {
+                const float dX = static_cast<float>(p.ix * kStep) - t.PlayerGridX;
+                const float dY = static_cast<float>(p.iy * kStep) - t.PlayerGridY;
+                const float sx = t.CenterX + t.ScaleX * (dX - dY);
+                const float sy = t.CenterY + t.ScaleY * ((p.z - playerZ) * k - (dX + dY));
+                if (sx < clipMin.x - 2.f || sx > clipMax.x || sy < clipMin.y - 2.f || sy > clipMax.y)
+                    continue;
+                m_dots.push_back(ImVec2(sx, sy));
+            }
+            if (m_dots.size() > kMaxDots) {
+                m_dots.resize(before);
+                break;
+            }
+        }
+
+        const float size = 2.f;
         const ImU32 color = ImGui::ColorConvertFloat4ToU32(m_s.WalkableColor);
-        for (const WalkPoint& p : m_points) {
-            if ((p.ix | p.iy) & mask) continue;
-            const float dX = static_cast<float>(p.ix * kStep) - t.PlayerGridX;
-            const float dY = static_cast<float>(p.iy * kStep) - t.PlayerGridY;
-            const float sx = t.CenterX + t.ScaleX * (dX - dY);
-            const float sy = t.CenterY + t.ScaleY * ((p.z - playerZ) * k - (dX + dY));
-            if (sx < clipMin.x - 1.f || sx > clipMax.x || sy < clipMin.y - 1.f || sy > clipMax.y)
-                continue;
+        for (const ImVec2& d : m_dots) {
             // StrokeLegacy keeps the 4-vertex rectangle: since ImGui 1.93 a rect at
             // fractional coordinates otherwise takes the anti-aliased fill (8
             // vertices, 30 indices), about three times the cost.
-            dl->AddRectFilled(ImVec2(sx, sy), ImVec2(sx + 1.f, sy + 1.f), color,
+            dl->AddRectFilled(d, ImVec2(d.x + size, d.y + size), color,
                               0.0f, ImDrawFlags_StrokeLegacy);
         }
     }
 
     RadarSettings                   m_s;
     PluginSDK::WalkableGridHandle   m_walkable;
-    std::vector<WalkPoint>          m_points;
+    std::vector<WalkPoint>          m_levels[kLevels];
+    std::vector<ImVec2>             m_dots;   // this frame's walkable dots
+    std::vector<PluginSDK::Entity>  m_entities;   // this frame's drawn entity types
     float                           m_heightFactor = 0.f;
 };
 
@@ -325,6 +383,6 @@ extern "C" PLUGIN_API void DestroyPlugin(PluginSDK::Plugin* p) {
 POEFIXER_PLUGIN_INFO(
     "Radar",
     "Radar",
-    "1.0.5",
+    "1.0.6",
     "POEFixer",
     "Draws nearby monsters, NPCs, chests, area transitions and the walkable map on the in-game large map.")

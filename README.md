@@ -1,6 +1,6 @@
 # Radar — POE2Fixer Plugin SDK Example
 
-Current version: 1.0.5
+Current version: 1.0.6
 
 Requires POE2Fixer 364 or newer.
 

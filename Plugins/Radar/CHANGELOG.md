@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.6
+
+- No longer switched off by the program as too slow, and no frame-rate drop with the large map open: the radar reads only the monsters, NPCs, chests and area transitions it draws instead of every object in the area (thousands on a map).
+- Fewer walkable dots: at least 12 pixels apart, at most 20,000 per frame, thinned evenly when the map is zoomed out.
+
 ## 1.0.5
 
 - Much faster with the large map open: the program no longer switches the plugin off as too slow on large areas.
